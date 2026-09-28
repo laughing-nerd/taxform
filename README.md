@@ -11,39 +11,44 @@ A data structure for annotating U.S. tax forms: where each box is, which value f
 | JSON Schema (generated from the types) | [`schema/annotation.schema.json`](schema/annotation.schema.json): for tools (validators, editor autocomplete) in any language. To read the format, use `types.go` or SPEC.md instead. |
 | Worked example: 2026 Form W-2, all 6 copies | [`examples/w2-2026.annotation.json`](examples/w2-2026.annotation.json) |
 | Sample data (3 W-2s, nested) | [`examples/taxpayer.json`](examples/taxpayer.json), [`examples/taxpayer-bad.json`](examples/taxpayer-bad.json) |
-| Rendered output | [`output/w2-filled.pdf`](output/w2-filled.pdf), [`output/w2-debug.pdf`](output/w2-debug.pdf) (box outlines) |
+| Rendered output | [`output/w2-filled.pdf`](output/w2-filled.pdf), [`output/w2-debug.pdf`](output/w2-debug.pdf) (box outlines), [`output/w2-bad.pdf`](output/w2-bad.pdf) (broken data, problem boxes left blank) |
 
 The Go code (`annotation/`, `cmd/`) is a **reference implementation used to prove the spec**. It is not a required part of adopting the format.
 
 ## Try it
 
-Requires Go 1.25+.
+Requires Go 1.25+ and `make`. Run `make` on its own to list every target.
 
 ```sh
-# Render the filled form. It checks the annotation against the PDF first and
-# refuses to print on a mismatch. Add -debug to outline every box with its id.
-go run ./cmd/render -annotation examples/w2-2026.annotation.json -data examples/taxpayer.json \
-  -pdf examples/fw2.pdf -out output/w2-filled.pdf
-
-# See what bad data produces: malformed SSN, "52,000", 5 box-12 codes, non-Latin name, overlong text
-go run ./cmd/render -annotation examples/w2-2026.annotation.json -data examples/taxpayer-bad.json \
-  -pdf examples/fw2.pdf -out output/w2-bad.pdf
-
-# Authoring: dump a fillable PDF's box rectangles as skeleton fields
-go run ./cmd/extract -pdf examples/fw2.pdf -page 3
-
-# Tests; regenerate the schema after changing annotation/types.go
-go test ./...
-go run ./cmd/schema > schema/annotation.schema.json
+make render    # fill the W-2 with the sample data            → output/w2-filled.pdf
+make debug     # same, with every box outlined and labelled   → output/w2-debug.pdf
+make bad       # broken data: malformed SSN, "52,000", 5 box-12 codes,
+               # non-Latin name, overlong text; each reported → output/w2-bad.pdf
+make demo      # all three
+make test      # run the tests
 ```
+
+`render` checks the annotation against the blank PDF first and refuses to print if its SHA-256 doesn't match.
+
+Authoring:
+
+```sh
+make generate-annotation                         # box rectangles of Copy B → drafts/fw2-page3.fields.json
+make generate-annotation PDF=form.pdf PAGE=2     # any fillable PDF, any page
+make generate-schema                             # after changing annotation/types.go
+```
+
+`drafts/` is git-ignored: extracted rectangles are a starting point for a new annotation, not a finished one. Each target is a one-line `go run` command, so see the Makefile to run the tools directly.
 
 ## Layout
 
 ```
-annotation/     the format (types.go), formatting, resolution, validation, tests
+Makefile        every command below, as make targets
+annotation/     the format (types.go, constants.go), formatting, resolution, validation, tests
 cmd/render      test-only renderer: annotation + data + blank PDF → filled PDF
 cmd/extract     authoring helper: AcroForm rectangles → skeleton fields
 cmd/schema      generates the JSON Schema from the Go types
+schema/         the generated JSON Schema
 examples/       blank IRS W-2 (2026), its annotation, sample data
 output/         rendered results
 ```

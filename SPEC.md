@@ -32,6 +32,8 @@ AUTHORING (once per form revision)                RENDERING (every time a form i
                          validate + debug render
 ```
 
+In this repository, `make generate-annotation` extracts the rectangles, `make debug` renders with every box outlined, and `make render` produces the filled form (see the README).
+
 - An **annotation** is static: one per form revision, reused for every taxpayer, never edited after publication (§10).
 - The **data** is per taxpayer and can be arbitrarily nested; the annotation reaches into it with paths (§4).
 - The **renderer** is generic: it knows nothing about W-2s or 1040s. All form knowledge lives in the annotation.
@@ -439,7 +441,7 @@ Validation and rendering report diagnostics instead of failing outright. Each ha
 The annotation references values; it never derives them. Box 3 is capped at the Social Security wage base, box 1 excludes 401(k) deferrals: that logic is the tax engine's job, where it's versioned and tested with the rest of the tax law. An annotation that can compute becomes a second, untested tax engine. (Formatting `part` is not a calculation: it only displays a portion of one value.)
 
 ### 12.2 A rectangle per box, copied from the PDF
-Rectangles use the PDF's native coordinate space, so they come straight from AcroForm widgets (`cmd/extract`) instead of being measured. Humans add meaning (`source`, `format`); machines provide geometry.
+Rectangles use the PDF's native coordinate space, so they come straight from AcroForm widgets (`make generate-annotation`, which runs `cmd/extract`) instead of being measured. Humans add meaning (`source`, `format`); machines provide geometry.
 
 ### 12.3 JSONPath (RFC 9535) with a current item
 The standard gives filters and libraries everywhere. The single addition, `@` = the current item, keeps paths short and makes one annotation work for every instance and every group row.
@@ -466,7 +468,7 @@ There is no annotation-wide `defaults` block and no named, reusable formats. Bot
 
 ## 13. Limitations and future enhancements
 
-- **Visual annotation editor:** draw or adjust rectangles on the PDF, pick paths from a sample data tree, with live preview. `cmd/extract` + `render -debug` are the command-line precursors.
+- **Visual annotation editor:** draw or adjust rectangles on the PDF, pick paths from a sample data tree, with live preview. `make generate-annotation` and `make debug` are the command-line precursors.
 - **Extraction (the reverse direction):** use the same rectangles to OCR values from uploaded forms (align the scan to the template, crop each box, read). One annotation would serve both printing and data intake.
 - **Continuation handling:** when a group overflows (a fifth box 12 code), automatically emit an additional form or a "see attached statement" page per the form's instructions.
 - **Proportional fonts and Unicode:** publish metric tables (e.g. Helvetica AFM widths) or allow embedded fonts with declared metrics.

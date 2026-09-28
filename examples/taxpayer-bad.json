@@ -1,0 +1,31 @@
+{
+  "return": {
+    "income": {
+      "wages": {
+        "w2s": [
+          {
+            "controlNumber": "THIS-CONTROL-NUMBER-IS-FAR-TOO-LONG-FOR-THE-BOX-EVEN-AFTER-SHRINKING-TO-THE-MINIMUM-SIZE-0001",
+            "employer": {
+              "name": "Contoso Ltd",
+              "address": { "line1": "1 Main St", "city": "Austin", "state": "TX", "zip": "73301" }
+            },
+            "employee": {
+              "ssn": "12-345",
+              "name": { "first": "Wei", "last": "李" },
+              "address": { "line1": "9 Elm St", "city": "Austin", "state": "TX", "zip": "73301" }
+            },
+            "compensation": { "wages": "52,000", "federalIncomeTaxWithheld": 4100 },
+            "codedItems": [
+              { "code": "D", "amount": 5000 },
+              { "code": "DD", "amount": 7200 },
+              { "code": "W", "amount": 1000 },
+              { "code": "C", "amount": 180 },
+              { "code": "AA", "amount": 2500 }
+            ],
+            "flags": { "retirementPlan": true }
+          }
+        ]
+      }
+    }
+  }
+}

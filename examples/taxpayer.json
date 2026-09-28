@@ -1,0 +1,125 @@
+{
+  "return": {
+    "taxYear": 2026,
+    "filingStatus": "single",
+    "taxpayer": {
+      "name": { "first": "Jordan", "middleInitial": "A", "last": "Rivera", "suffix": "Jr." },
+      "ssn": "123-45-6789"
+    },
+    "income": {
+      "wages": {
+        "w2s": [
+          {
+            "id": "w2-acme",
+            "void": false,
+            "controlNumber": "ACM-2026-00417",
+            "employer": {
+              "ein": "12-3456789",
+              "name": "Acme Robotics, Inc.",
+              "address": { "line1": "500 Howard Street", "line2": "Suite 1200", "city": "San Francisco", "state": "CA", "zip": "94105" }
+            },
+            "employee": {
+              "ssn": "123-45-6789",
+              "name": { "first": "Jordan", "middleInitial": "A", "last": "Rivera", "suffix": "Jr." },
+              "address": { "line1": "1847 Castro Street", "line2": "Apt 3B", "city": "San Francisco", "state": "CA", "zip": "94114" }
+            },
+            "compensation": {
+              "wages": "98250.50",
+              "federalIncomeTaxWithheld": 14210.33,
+              "socialSecurityWages": 105750.50,
+              "socialSecurityTaxWithheld": 6556.53,
+              "medicareWages": 105750.50,
+              "medicareTaxWithheld": 1533.38,
+              "socialSecurityTips": 0,
+              "allocatedTips": 0,
+              "dependentCareBenefits": 2500,
+              "nonqualifiedPlans": 0
+            },
+            "codedItems": [
+              { "code": "D", "amount": 7500 },
+              { "code": "DD", "amount": 9432.18 },
+              { "code": "W", "amount": 1500 }
+            ],
+            "flags": { "statutoryEmployee": false, "retirementPlan": true, "thirdPartySickPay": false },
+            "otherItems": ["CASDI 1,374.76"],
+            "tippedOccupationCodes": [],
+            "stateAndLocal": [
+              { "state": "CA", "employerStateId": "123-4567-8", "stateWages": 98250.50, "stateIncomeTax": 6120.44, "localWages": null, "localIncomeTax": null, "locality": null }
+            ]
+          },
+          {
+            "id": "w2-bistro",
+            "void": false,
+            "controlNumber": "GGB-0093",
+            "employer": {
+              "ein": "987654321",
+              "name": "Golden Gate Bistro LLC",
+              "address": { "line1": "2 Embarcadero Center", "city": "San Francisco", "state": "CA", "zip": "94111" }
+            },
+            "employee": {
+              "ssn": "123456789",
+              "name": { "first": "Jordan", "middleInitial": "A", "last": "Rivera", "suffix": "Jr." },
+              "address": { "line1": "1847 Castro Street", "line2": "Apt 3B", "city": "San Francisco", "state": "CA", "zip": "94114" }
+            },
+            "compensation": {
+              "wages": 18640.00,
+              "federalIncomeTaxWithheld": 1120.00,
+              "socialSecurityWages": 12400.00,
+              "socialSecurityTaxWithheld": 1155.68,
+              "medicareWages": 18640.00,
+              "medicareTaxWithheld": 270.28,
+              "socialSecurityTips": 6240.00,
+              "allocatedTips": 350.00,
+              "dependentCareBenefits": 0,
+              "nonqualifiedPlans": 0
+            },
+            "codedItems": [],
+            "flags": { "statutoryEmployee": false, "retirementPlan": false, "thirdPartySickPay": false },
+            "otherItems": ["CASDI 242.32"],
+            "tippedOccupationCodes": ["102"],
+            "stateAndLocal": [
+              { "state": "CA", "employerStateId": "987-6543-2", "stateWages": 18640.00, "stateIncomeTax": 412.50 }
+            ]
+          },
+          {
+            "id": "w2-northwind",
+            "void": false,
+            "controlNumber": null,
+            "employer": {
+              "ein": "45-6789012",
+              "name": "Northwind Logistics & Freight Forwarding Corporation of America",
+              "address": { "line1": "1 World Trade Center, Floor 85", "city": "New York", "state": "NY", "zip": "10007" }
+            },
+            "employee": {
+              "ssn": "123-45-6789",
+              "name": { "first": "Jordan", "middleInitial": "A", "last": "Rivera", "suffix": "Jr." },
+              "address": { "line1": "1847 Castro Street", "line2": "Apt 3B", "city": "San Francisco", "state": "CA", "zip": "94114" }
+            },
+            "compensation": {
+              "wages": 22000,
+              "federalIncomeTaxWithheld": 2310.75,
+              "socialSecurityWages": 22000,
+              "socialSecurityTaxWithheld": 1364.00,
+              "medicareWages": 22000,
+              "medicareTaxWithheld": 319.00,
+              "socialSecurityTips": 0,
+              "allocatedTips": 0,
+              "dependentCareBenefits": 0,
+              "nonqualifiedPlans": 0
+            },
+            "codedItems": [
+              { "code": "dd", "amount": "3120.00" }
+            ],
+            "flags": { "statutoryEmployee": false, "retirementPlan": false, "thirdPartySickPay": true },
+            "otherItems": ["NYPFL 95.04", "NYSDI 31.20"],
+            "tippedOccupationCodes": [],
+            "stateAndLocal": [
+              { "state": "NY", "employerStateId": "NY-4455667", "stateWages": 16500.00, "stateIncomeTax": 812.25, "localWages": 16500.00, "localIncomeTax": 530.10, "locality": "NYC" },
+              { "state": "NJ", "employerStateId": "NJ-778899001", "stateWages": 5500.00, "stateIncomeTax": 96.25 }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

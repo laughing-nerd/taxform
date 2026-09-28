@@ -1,0 +1,322 @@
+{
+  "specVersion": "1.0.0",
+  "annotationVersion": 1,
+  "form": {
+    "id": "irs-w2",
+    "title": "Form W-2 Wage and Tax Statement",
+    "jurisdiction": "US",
+    "taxYear": 2026,
+    "revision": "2026",
+    "pdf": {
+      "sha256": "61eca7c81f16d3965819fe1f31be4fe68c1b2887a81f51172f1d2ed2b2b9f087",
+      "pageCount": 11,
+      "source": "https://www.irs.gov/pub/irs-pdf/fw2.pdf"
+    }
+  },
+  "instances": "$.return.income.wages.w2s[*]",
+  "layout": {
+    "pageSize": { "width": 612, "height": 792 },
+    "copies": [
+      { "name": "A", "description": "For Social Security Administration", "pages": [1] },
+      { "name": "1", "description": "For State, City, or Local Tax Department", "pages": [2] },
+      { "name": "B", "description": "To Be Filed With Employee's FEDERAL Tax Return", "pages": [3] },
+      { "name": "C", "description": "For EMPLOYEE'S RECORDS", "pages": [5] },
+      { "name": "2", "description": "To Be Filed With Employee's State, City, or Local Income Tax Return", "pages": [7] },
+      { "name": "D", "description": "For Employer", "pages": [9] }
+    ],
+    "slots": [
+      { "x": 0, "y": 0 },
+      { "x": 0, "y": -396 }
+    ]
+  },
+  "fields": [
+    {
+      "id": "void",
+      "label": "Void",
+      "kind": "checkbox",
+      "copies": ["A", "D"],
+      "rect": { "x": 132.5, "y": 740, "width": 10, "height": 10 },
+      "source": "@.void",
+      "style": { "size": 9, "padding": 0.5 }
+    },
+    {
+      "id": "a",
+      "label": "a Employee's social security number",
+      "rect": { "x": 153.2, "y": 732, "width": 125.6, "height": 12 },
+      "source": "@.employee.ssn",
+      "format": { "type": "ssn", "mask": { "visible": 4, "copies": ["B", "C", "2"] } },
+      "style": { "align": "center" },
+      "overflow": "error",
+      "required": true
+    },
+    {
+      "id": "b",
+      "label": "b Employer identification number (EIN)",
+      "rect": { "x": 38, "y": 708, "width": 292.2, "height": 12 },
+      "source": "@.employer.ein",
+      "format": { "type": "ein" },
+      "overflow": "error",
+      "required": true
+    },
+    {
+      "id": "c",
+      "label": "c Employer's name, address, and ZIP code",
+      "kind": "multiline",
+      "rect": { "x": 38, "y": 636, "width": 292.2, "height": 60 },
+      "template": "{@.employer.name}\n{@.employer.address.line1}\n{@.employer.address.line2}\n{@.employer.address.city}, {@.employer.address.state} {@.employer.address.zip}",
+      "required": true
+    },
+    {
+      "id": "d",
+      "label": "d Control number",
+      "rect": { "x": 38, "y": 612, "width": 292.2, "height": 12 },
+      "source": "@.controlNumber"
+    },
+    {
+      "id": "e_first",
+      "label": "e Employee's first name and initial",
+      "rect": { "x": 38, "y": 588, "width": 133.8, "height": 12 },
+      "template": "{@.employee.name.first} {@.employee.name.middleInitial}",
+      "required": true
+    },
+    {
+      "id": "e_last",
+      "label": "e Last name",
+      "rect": { "x": 173.8, "y": 588, "width": 134.8, "height": 12 },
+      "source": "@.employee.name.last",
+      "required": true
+    },
+    {
+      "id": "e_suffix",
+      "label": "e Suff.",
+      "rect": { "x": 310.6, "y": 588, "width": 19.6, "height": 12 },
+      "source": "@.employee.name.suffix",
+      "style": { "padding": 1 }
+    },
+    {
+      "id": "f",
+      "label": "f Employee's address and ZIP code",
+      "kind": "multiline",
+      "rect": { "x": 38, "y": 516, "width": 292.2, "height": 70 },
+      "template": "{@.employee.address.line1}\n{@.employee.address.line2}\n{@.employee.address.city}, {@.employee.address.state} {@.employee.address.zip}",
+      "required": true
+    },
+    {
+      "id": "box1",
+      "label": "1 Wages, tips, other compensation",
+      "rect": { "x": 333.2, "y": 708, "width": 118.4, "height": 12 },
+      "source": "@.compensation.wages",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box2",
+      "label": "2 Federal income tax withheld",
+      "rect": { "x": 455.6, "y": 708, "width": 118.4, "height": 12 },
+      "source": "@.compensation.federalIncomeTaxWithheld",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box3",
+      "label": "3 Social security wages",
+      "rect": { "x": 332.2, "y": 684, "width": 120.4, "height": 12 },
+      "source": "@.compensation.socialSecurityWages",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box4",
+      "label": "4 Social security tax withheld",
+      "rect": { "x": 454.6, "y": 684, "width": 119.4, "height": 12 },
+      "source": "@.compensation.socialSecurityTaxWithheld",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box5",
+      "label": "5 Medicare wages and tips",
+      "rect": { "x": 332.2, "y": 660, "width": 120.4, "height": 12 },
+      "source": "@.compensation.medicareWages",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box6",
+      "label": "6 Medicare tax withheld",
+      "rect": { "x": 454.6, "y": 660, "width": 119.4, "height": 12 },
+      "source": "@.compensation.medicareTaxWithheld",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box7",
+      "label": "7 Social security tips",
+      "rect": { "x": 332.2, "y": 636, "width": 120.4, "height": 12 },
+      "source": "@.compensation.socialSecurityTips",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box8",
+      "label": "8 Allocated tips",
+      "rect": { "x": 454.6, "y": 636, "width": 119.4, "height": 12 },
+      "source": "@.compensation.allocatedTips",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box10",
+      "label": "10 Dependent care benefits",
+      "rect": { "x": 454.6, "y": 612, "width": 119.4, "height": 12 },
+      "source": "@.compensation.dependentCareBenefits",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box11",
+      "label": "11 Nonqualified plans",
+      "rect": { "x": 332.2, "y": 600, "width": 120.4, "height": 12 },
+      "source": "@.compensation.nonqualifiedPlans",
+      "format": { "type": "currency", "zero": "blank" }
+    },
+    {
+      "id": "box12",
+      "label": "12a-12d See instructions for box 12",
+      "group": {
+        "items": "@.codedItems",
+        "rows": [
+          { "x": 0, "y": 0 },
+          { "x": 0, "y": -24 },
+          { "x": 0, "y": -48 },
+          { "x": 0, "y": -72 }
+        ],
+        "fields": [
+          {
+            "id": "code",
+            "label": "Code",
+            "rect": { "x": 462.8, "y": 588, "width": 25.8, "height": 12 },
+            "source": "@.code",
+            "format": { "type": "text", "upper": true },
+            "style": { "align": "center" },
+            "overflow": "error",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "rect": { "x": 490.6, "y": 588, "width": 83.4, "height": 12 },
+            "source": "@.amount",
+            "format": { "type": "currency" },
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "box13_statutory",
+      "label": "13 Statutory employee",
+      "kind": "checkbox",
+      "rect": { "x": 348.6, "y": 577.7, "width": 10, "height": 10 },
+      "source": "@.flags.statutoryEmployee",
+      "style": { "size": 9, "padding": 0.5 }
+    },
+    {
+      "id": "box13_retirement",
+      "label": "13 Retirement plan",
+      "kind": "checkbox",
+      "rect": { "x": 384.6, "y": 577.7, "width": 10, "height": 10 },
+      "source": "@.flags.retirementPlan",
+      "style": { "size": 9, "padding": 0.5 }
+    },
+    {
+      "id": "box13_sick_pay",
+      "label": "13 Third-party sick pay",
+      "kind": "checkbox",
+      "rect": { "x": 420.6, "y": 578, "width": 10, "height": 10 },
+      "source": "@.flags.thirdPartySickPay",
+      "style": { "size": 9, "padding": 0.5 }
+    },
+    {
+      "id": "box14a",
+      "label": "14a Other",
+      "kind": "multiline",
+      "rect": { "x": 332.2, "y": 528, "width": 120.4, "height": 36 },
+      "source": "@.otherItems",
+      "style": { "size": 8 }
+    },
+    {
+      "id": "box14b",
+      "label": "14b Treasury Tipped Occupation Code(s)",
+      "group": {
+        "items": "@.tippedOccupationCodes",
+        "rows": [
+          { "x": 0, "y": 0 },
+          { "x": 61.2, "y": 0 }
+        ],
+        "fields": [
+          {
+            "id": "code",
+            "rect": { "x": 332.2, "y": 504, "width": 59.2, "height": 12 },
+            "source": "@",
+            "style": { "align": "center" },
+            "overflow": "error"
+          }
+        ]
+      }
+    },
+    {
+      "id": "state",
+      "label": "15-20 State and local",
+      "group": {
+        "items": "@.stateAndLocal",
+        "rows": [
+          { "x": 0, "y": 0 },
+          { "x": 0, "y": -24 }
+        ],
+        "fields": [
+          {
+            "id": "box15_state",
+            "label": "15 State",
+            "rect": { "x": 38, "y": 480, "width": 25.8, "height": 12 },
+            "source": "@.state",
+            "format": { "type": "text", "upper": true },
+            "style": { "align": "center" },
+            "overflow": "error"
+          },
+          {
+            "id": "box15_employer_id",
+            "label": "15 Employer's state ID number",
+            "rect": { "x": 65.8, "y": 480, "width": 127.6, "height": 12 },
+            "source": "@.employerStateId"
+          },
+          {
+            "id": "box16",
+            "label": "16 State wages, tips, etc.",
+            "rect": { "x": 195.4, "y": 480, "width": 84.4, "height": 12 },
+            "source": "@.stateWages",
+            "format": { "type": "currency", "zero": "blank" }
+          },
+          {
+            "id": "box17",
+            "label": "17 State income tax",
+            "rect": { "x": 281.8, "y": 480, "width": 77.2, "height": 12 },
+            "source": "@.stateIncomeTax",
+            "format": { "type": "currency", "zero": "blank" }
+          },
+          {
+            "id": "box18",
+            "label": "18 Local wages, tips, etc.",
+            "rect": { "x": 361, "y": 480, "width": 84.4, "height": 12 },
+            "source": "@.localWages",
+            "format": { "type": "currency", "zero": "blank" }
+          },
+          {
+            "id": "box19",
+            "label": "19 Local income tax",
+            "rect": { "x": 447.4, "y": 480, "width": 77.2, "height": 12 },
+            "source": "@.localIncomeTax",
+            "format": { "type": "currency", "zero": "blank" }
+          },
+          {
+            "id": "box20",
+            "label": "20 Locality name",
+            "rect": { "x": 526.6, "y": 480, "width": 47.4, "height": 12 },
+            "source": "@.locality"
+          }
+        ]
+      }
+    }
+  ]
+}

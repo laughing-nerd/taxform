@@ -1,0 +1,489 @@
+{
+  "$comment": "Generated from annotation/types.go by cmd/schema; do not edit. This file is for tools (validators, editor autocomplete). For humans: read annotation/types.go or SPEC.md.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/tax-form-annotation/1.0.0/annotation.schema.json",
+  "$defs": {
+    "Copy": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Short name, e.g. \"A\", \"B\", \"2\". Referenced by Field.Copies and Mask.Copies."
+        },
+        "description": {
+          "type": "string",
+          "description": "What the copy is for."
+        },
+        "pages": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array",
+          "minItems": 1,
+          "description": "0-based PDF page indexes, in order. Field.Page indexes into this list."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "pages"
+      ],
+      "description": "Copy is one copy of the form (e.g."
+    },
+    "Field": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "description": "Unique within the annotation (within its group, for a group's fields)."
+        },
+        "label": {
+          "type": "string",
+          "description": "The box label as printed, e.g. \"1 Wages, tips, other compensation\"."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "text",
+            "multiline",
+            "comb",
+            "checkbox"
+          ],
+          "description": "Layout kind. Defaults to \"text\"."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Index into the copy's Pages list. Defaults to 0."
+        },
+        "copies": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Restrict this field to these copies (e.g. VOID only exists on A and D).\nEmpty means every copy."
+        },
+        "rect": {
+          "$ref": "#/$defs/Rect",
+          "description": "Where the value is printed, for the first slot and first group row.\nRequired, except on a field with a group."
+        },
+        "source": {
+          "type": "string",
+          "description": "JSONPath to the value. Exactly one of Source or Template is required\n(checkboxes require Source)."
+        },
+        "template": {
+          "type": "string",
+          "description": "Text with embedded paths, e.g. \"{@.city}, {@.state} {@.zip}\". Lines\nwhose placeholders are all empty are dropped. Output is plain text."
+        },
+        "checkedValue": {
+          "description": "Checkbox only: the value that checks the box. When omitted the box is\nchecked by boolean true. Use it for radio-like groups, e.g. filing\nstatus \"single\" / \"mfj\", one checkbox field per option."
+        },
+        "cells": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Comb only: number of character cells."
+        },
+        "format": {
+          "$ref": "#/$defs/Format",
+          "description": "How the value is converted to text. Defaults to text."
+        },
+        "style": {
+          "$ref": "#/$defs/Style",
+          "description": "Typography; unset keys take the built-in defaults (see Style)."
+        },
+        "overflow": {
+          "type": "string",
+          "enum": [
+            "shrink",
+            "error"
+          ],
+          "description": "What to do when the text does not fit: \"shrink\" (default) makes the\nfont smaller down to minSize, then cuts the text and warns; \"error\"\nprints nothing and reports an error."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Report an error when the value is missing or null."
+        },
+        "meta": {
+          "type": "object",
+          "description": "Free-form extension data (e.g. e-file XPath, extraction hints)."
+        },
+        "group": {
+          "$ref": "#/$defs/Group",
+          "description": "Repeating rows. When set, this field is a group: it takes only id,\nlabel, page, copies and group, and prints its inner fields once per row."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "description": "Field is one box on the form."
+    },
+    "Form": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Stable identifier, e.g. \"irs-w2\", \"irs-1040\", \"ca-540\"."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable title as printed on the form."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "Issuing authority: \"US\" for federal, \"US-CA\" for California, etc."
+        },
+        "taxYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "description": "Tax year the form is used for."
+        },
+        "revision": {
+          "type": "string",
+          "description": "Revision as printed on the form, e.g. \"2026\" or \"Rev. December 2025\"."
+        },
+        "pdf": {
+          "$ref": "#/$defs/PDFRef",
+          "description": "The blank PDF this annotation was authored against."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "jurisdiction",
+        "taxYear",
+        "revision",
+        "pdf"
+      ],
+      "description": "Form identifies the blank form."
+    },
+    "Format": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "currency",
+            "number",
+            "ssn",
+            "ein",
+            "date"
+          ]
+        },
+        "decimals": {
+          "type": "integer",
+          "maximum": 6,
+          "minimum": 0,
+          "description": "currency, number: digits after the decimal point. Rounding is half away\nfrom zero on the exact decimal value (never binary floating point).\nDefaults to 2 for currency and 0 for number."
+        },
+        "negative": {
+          "type": "string",
+          "enum": [
+            "minus",
+            "parens"
+          ],
+          "description": "currency, number: \"minus\" (-1,234.00, default) or \"parens\" ((1,234.00))."
+        },
+        "zero": {
+          "type": "string",
+          "enum": [
+            "show",
+            "blank"
+          ],
+          "description": "currency, number: \"show\" (default) prints zero; \"blank\" prints nothing."
+        },
+        "part": {
+          "type": "string",
+          "enum": [
+            "integer",
+            "fraction"
+          ],
+          "description": "currency, number: print only one part of the rounded amount, for forms\nwith separate dollars and cents boxes. \"integer\" prints 1,234 (with\nsign), \"fraction\" prints the decimal digits only (50). Default: both."
+        },
+        "mask": {
+          "$ref": "#/$defs/Mask",
+          "description": "ssn, ein: replace leading digits, e.g. XXX-XX-6789 on employee copies."
+        },
+        "pattern": {
+          "type": "string",
+          "description": "date: output pattern using YYYY, YY, MM, DD. Defaults to \"MM/DD/YYYY\"."
+        },
+        "upper": {
+          "type": "boolean",
+          "description": "text: print in capital letters."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "description": "Format converts a data value to the printed string."
+    },
+    "Group": {
+      "properties": {
+        "items": {
+          "type": "string",
+          "description": "JSONPath to the list whose items fill the rows, one item per row. If it\nselects a single array, the array's elements are the items. Filters\nwork: \"@.codes[?@.code != 'DD']\". Inside the group \"@\" is the item."
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/Offset"
+          },
+          "type": "array",
+          "minItems": 1,
+          "description": "One offset per printed row, applied to every inner field's rectangle.\nMore items than rows is reported as an error and only the first\nlen(rows) items are printed."
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array",
+          "minItems": 1,
+          "description": "The fields of one row, with rectangles for the first row. They inherit\npage and copies from the group's field. Groups cannot be nested."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "items",
+        "rows",
+        "fields"
+      ],
+      "description": "Group repeats a set of fields once per item of a list: W-2 box 12 (four code/amount rows), the two state rows, or a dependents table."
+    },
+    "Layout": {
+      "properties": {
+        "pageSize": {
+          "$ref": "#/$defs/Size",
+          "description": "Size of every page in points"
+        },
+        "copies": {
+          "items": {
+            "$ref": "#/$defs/Copy"
+          },
+          "type": "array",
+          "minItems": 1,
+          "description": "Copies of the form contained in the PDF (W-2 has A, 1, B, C, 2, D).\nA single-copy form has one entry."
+        },
+        "slots": {
+          "items": {
+            "$ref": "#/$defs/Offset"
+          },
+          "type": "array",
+          "description": "Positions of form instances on one sheet. The W-2 prints two instances\nper page (top and bottom), so it has two slots. Field rectangles are\nauthored for the first slot and shifted by each slot's offset.\nDefaults to a single slot at offset (0, 0)."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "pageSize",
+        "copies"
+      ],
+      "description": "Layout describes the physical structure of the form."
+    },
+    "Mask": {
+      "properties": {
+        "visible": {
+          "type": "integer",
+          "maximum": 9,
+          "minimum": 0,
+          "description": "Number of trailing digits left visible (IRS truncation keeps 4)."
+        },
+        "char": {
+          "type": "string",
+          "maxLength": 1,
+          "minLength": 1,
+          "description": "Replacement character. Defaults to \"X\"."
+        },
+        "copies": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Apply only on these copies (e.g. employee copies B, C, 2). Empty means\nevery copy."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "visible"
+      ],
+      "description": "Mask truncates an identifier, keeping only the last Visible digits."
+    },
+    "Offset": {
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "description": "Offset is a translation in points."
+    },
+    "PDFRef": {
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Lowercase hex SHA-256 of the blank PDF. Renderers must refuse to render\nonto a file with a different hash."
+        },
+        "pageCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of pages in the blank PDF."
+        },
+        "source": {
+          "type": "string",
+          "description": "Where the PDF was obtained (informational)."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "sha256",
+        "pageCount"
+      ],
+      "description": "PDFRef pins the blank PDF."
+    },
+    "Rect": {
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "description": "Rect is a box in points, measured from the bottom-left of the page."
+    },
+    "Size": {
+      "properties": {
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "width",
+        "height"
+      ],
+      "description": "Size is a width and height in points."
+    },
+    "Style": {
+      "properties": {
+        "size": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Font size in points. Defaults to 10."
+        },
+        "minSize": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Smallest size \"shrink\" may use. Defaults to 6 (or Size, if smaller)."
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "description": "\"left\", \"center\" or \"right\". Defaults to right for currency and number,\nleft otherwise."
+        },
+        "valign": {
+          "type": "string",
+          "enum": [
+            "top",
+            "middle"
+          ],
+          "description": "\"top\" or \"middle\". Defaults to top for multiline, middle otherwise."
+        },
+        "padding": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Inner spacing on every side, in points. Defaults to 2."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Style controls size and placement inside the rectangle."
+    }
+  },
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the TFA format this file is written against (semver)."
+    },
+    "annotationVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Revision of this annotation file. Published files are immutable: any\ncorrection produces a new file with annotationVersion + 1."
+    },
+    "form": {
+      "$ref": "#/$defs/Form",
+      "description": "The exact blank form this annotation describes."
+    },
+    "instances": {
+      "type": "string",
+      "description": "JSONPath selecting the form instances to render: one form is printed\nper match (e.g. one W-2 per employer), and \"@\" in field paths refers to\nthat match. Omit for forms printed once per return; \"@\" is then the\ndata root."
+    },
+    "layout": {
+      "$ref": "#/$defs/Layout",
+      "description": "Page geometry, copies, and instance slots."
+    },
+    "fields": {
+      "items": {
+        "$ref": "#/$defs/Field"
+      },
+      "type": "array",
+      "description": "Every box on the form, in reading order. Repeating rows (W-2 box 12,\nstate rows 15-20) are fields with a group."
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "specVersion",
+    "annotationVersion",
+    "form",
+    "layout",
+    "fields"
+  ],
+  "title": "Tax Form Annotation 1.0.0",
+  "description": "Annotation describes one revision of one form."
+}
